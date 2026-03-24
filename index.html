@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WHAT IS GROWTH ✨</title>
+<link rel="icon" href="YH-SOFT.ico" type="image/x-icon">
 <style>
 /* ╔══════════════════════════════════════════════╗
    ║  1. CSS 스타일                                ║
@@ -336,7 +337,7 @@ body::before {
       <div class="bar-track"><div class="bar-fill xp-fill" id="xpBar"></div></div>
       <span id="xpVal" style="font-size:10px;color:var(--text2)"></span>
     </div>
-    <div class="gold-badge">💰 <span id="tGold">1000</span>G</div>
+    <div class="gold-badge">💰 <span id="tGold">100</span>G</div>
   </div>
 
   <!-- ── 2-3. 이벤트 박스: 랜덤 이벤트 팝업 ── -->
@@ -354,7 +355,7 @@ body::before {
         <input class="char-name" id="charName" value="나의 캐릭터" maxlength="10">
         <canvas id="charCanvas" width="96" height="120" title="클릭 → 헤어 색상 변경!"></canvas>
         <div class="char-job"   id="charJob">📚 학생</div>
-        <div class="char-title" id="charTitle">학생</div>
+        <div class="char-title" id="charTitle">평범한 학생</div>
         <div class="char-lv"    id="charLv">Lv.1</div>
       </div>
 
@@ -479,7 +480,7 @@ const K_COLORS = { '수학':'#7ee8fa','언어':'#e8b4f8','과학':'#a8e6cf','역
 
 /* ── 3-7. 칭호 목록 ── need(스탯 합산 기준값) / t(칭호 이름) */
 const TITLES = [
-  {need:0,   t:'학생'},
+  {need:0,   t:'평범한 학생'},
   {need:30,  t:'성장하는 청춘'},
   {need:80,  t:'노력하는 사람'},
   {need:160, t:'빛나는 청년'},
@@ -668,7 +669,7 @@ function doImport(){
    know: 지식 6과목 수치 */
 const G = {
   day:1, age:18, energy:10, maxEnergy:10,
-  xp:0, xpNext:150, level:1, gold:1000,
+  xp:0, xpNext:150, level:1, gold:100,
   stats:{ str:10, int:10, cha:10, cre:10, hlt:10, hap:10 },
   equippedOutfit:0, inventory:[0], jobId:'student',
   know: Object.fromEntries(Object.keys(KNOWLEDGE_DATA).map(k=>[k,0])),
