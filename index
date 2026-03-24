@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 성장 일기 ✨</title>
+<style>
+/* ╔══════════════════════════════════════════════╗
+   ║  1. CSS 스타일                                ║
+   ║  전체 색상, 레이아웃, 폰트, 애니메이션 정의    ║
+   ╚══════════════════════════════════════════════╝ */
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
+/* ── 1-1. 색상 테마 변수 ── 여기서 전체 색상 변경 가능 */
+:root {
+  --bg: #0d0a1a;
+  --panel: #1a1530;
+  --panel2: #221d3a;
+  --border: #3d3460;
+  --accent: #e8b4f8;
+  --accent2: #7ee8fa;
+  --accent3: #ffd6a5;
+  --accent4: #a8e6cf;
+  --text: #e8e0f8;
+  --text2: #9890c0;
+  --gold: #ffd700;
+  --px: 'DotGothic16', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--px);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(120,80,200,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, rgba(100,200,255,0.12) 0%, transparent 50%);
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 8%,  rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 60% 55%, rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 75% 22%, rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 88% 68%, rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 93% 10%, rgba(255,255,255,.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 4%  82%, rgba(255,255,255,.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 55% 88%, rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 32% 62%, rgba(255,255,255,.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 17% 55%, rgba(255,255,255,.3) 0%,transparent 100%),
+    radial-gradient(1px 1px at 70% 42%, rgba(255,255,255,.4) 0%,transparent 100%);
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from{opacity:.6} to{opacity:1} }
+
+.wrap { max-width: 1140px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
+
+.header { text-align:center; padding: 12px 0 8px; border-bottom: 2px solid var(--border); margin-bottom: 14px; }
+.header h1 { font-size: 20px; color: var(--accent); letter-spacing: 4px; text-shadow: 0 0 20px rgba(232,180,248,.5); }
+.header p  { font-size: 10px; color: var(--text2); margin-top: 3px; letter-spacing: 2px; }
+
+.topbar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--panel); border: 2px solid var(--border);
+  border-radius: 4px; padding: 8px 14px; margin-bottom: 14px; font-size: 12px;
+}
+.topbar-item { display:flex; align-items:center; gap:6px; }
+.topbar-sep  { color: var(--border); }
+.bar-track   { width:90px; height:9px; background:#111; border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+.bar-fill    { height:100%; border-radius:2px; transition: width .4s; }
+.en-fill     { background: linear-gradient(90deg,#ff6b6b,#ffd93d); }
+.xp-fill     { background: linear-gradient(90deg,#a8e6cf,#7ee8fa); }
+.gold-badge  { color:var(--gold); font-size:13px; margin-left:auto; }
+
+/* ── 1-2. 3단 레이아웃 ── */
+.main { display:grid; grid-template-columns:168px 1fr 168px; gap:12px; align-items:start; }
+
+/* ── 1-3. 왼쪽 열: 캐릭터·스탯·골드 ── */
+.left { display:flex; flex-direction:column; gap:8px; }
+
+.charbox {
+  background:var(--panel); border:2px solid var(--border);
+  border-radius:4px; padding:10px; text-align:center; position:relative; overflow:hidden;
+}
+.charbox::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse at 50% 110%, rgba(232,180,248,.12) 0%,transparent 60%);
+}
+.char-name {
+  background:transparent; border:none; border-bottom:1px dashed var(--border);
+  color:var(--accent); font-family:var(--px); font-size:12px;
+  text-align:center; width:100%; margin-bottom:8px; outline:none;
+}
+#charCanvas { image-rendering:pixelated; display:block; margin:0 auto 5px; border:1px solid var(--border); border-radius:2px; background:#07050f; cursor:pointer; }
+.char-job   { font-size:9px; color:var(--accent2); letter-spacing:1px; margin-bottom:3px; }
+.char-title { display:inline-block; background:rgba(232,180,248,.1); border:1px solid var(--accent); border-radius:2px; padding:2px 6px; font-size:8px; color:var(--accent); }
+.char-lv    { font-size:10px; color:var(--text2); margin-top:3px; }
+
+.sbox { background:var(--panel); border:2px solid var(--border); border-radius:4px; padding:8px; }
+.sbox-title { font-size:9px; color:var(--text2); letter-spacing:2px; text-align:center; border-bottom:1px solid var(--border); padding-bottom:3px; margin-bottom:6px; }
+.srow { display:flex; align-items:center; margin-bottom:4px; gap:3px; }
+.sname { font-size:9px; color:var(--text2); width:46px; flex-shrink:0; }
+.sbar  { flex:1; height:5px; background:#111; border:1px solid var(--border); border-radius:1px; overflow:hidden; }
+.sbar-fill { height:100%; border-radius:1px; transition:width .5s; }
+.sval  { font-size:10px; font-weight:bold; width:22px; text-align:right; flex-shrink:0; }
+
+.gold-panel {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px;
+  padding:7px; text-align:center;
+}
+.gold-panel .g-label { color:var(--text2); font-size:8px; letter-spacing:2px; margin-bottom:3px; }
+.gold-panel .g-val   { color:var(--gold); font-size:15px; }
+.gold-panel .g-hint  { color:var(--text2); font-size:8px; margin-top:3px; line-height:1.6; }
+
+/* ── 1-4. 가운데 열: 탭·활동·직업 등 ── */
+.middle { display:flex; flex-direction:column; gap:10px; }
+
+.tabs { display:flex; gap:3px; background:var(--panel); border:2px solid var(--border); border-radius:4px; padding:5px; }
+.tab  {
+  flex:1; background:transparent; border:1px solid transparent;
+  color:var(--text2); font-family:var(--px); font-size:9px;
+  padding:5px 2px; cursor:pointer; border-radius:2px; transition:all .15s; letter-spacing:1px;
+}
+.tab:hover  { color:var(--text); border-color:var(--border); }
+.tab.on     { background:var(--panel2); color:var(--accent); border-color:var(--accent); }
+
+.tpanel { display:none; }
+.tpanel.on { display:block; }
+
+.agrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.acard {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px;
+  padding:10px 7px; cursor:pointer; transition:all .2s; text-align:center;
+}
+.acard:hover:not(.off) { transform:translateY(-2px); border-color:var(--acc,var(--accent)); box-shadow:0 4px 14px var(--shd,transparent); }
+.acard.off { opacity:.38; cursor:not-allowed; }
+.acard .aicon { font-size:24px; margin-bottom:4px; display:block; }
+.acard .aname { font-size:10px; color:var(--text); margin-bottom:2px; }
+.acard .acost { font-size:8px; color:var(--text2); margin-bottom:4px; }
+.acard .atags span { display:inline-block; margin:1px; padding:1px 4px; border-radius:2px; font-size:7px; }
+
+.jgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.jcard {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px;
+  padding:9px 7px; text-align:center; transition:all .2s;
+}
+.jcard.available { cursor:pointer; }
+.jcard.available:hover { border-color:var(--accent2); transform:translateY(-2px); }
+.jcard.current   { border-color:var(--gold); background:rgba(255,215,0,.06); cursor:default; }
+.jcard.locked    { opacity:.32; cursor:not-allowed; }
+.jcard .j-icon   { font-size:20px; margin-bottom:4px; }
+.jcard .j-name   { font-size:10px; color:var(--text); margin-bottom:2px; }
+.jcard .j-pay    { font-size:9px; color:var(--gold); margin-bottom:3px; }
+.jcard .j-req    { font-size:7px; color:var(--text2); line-height:1.6; }
+.jcard .j-badge  { display:inline-block; font-size:7px; padding:1px 5px; border-radius:2px; margin-top:3px; }
+.j-badge.cur  { background:rgba(255,215,0,.2); color:var(--gold); border:1px solid var(--gold); }
+.j-badge.lock { background:rgba(255,100,100,.15); color:#ff9999; border:1px solid rgba(255,100,100,.3); }
+.j-badge.avail{ background:rgba(126,232,250,.15); color:var(--accent2); border:1px solid rgba(126,232,250,.3); }
+
+.sgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+.sitem {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px;
+  padding:8px; text-align:center; cursor:pointer; transition:all .2s;
+}
+.sitem:hover:not(.owned) { border-color:var(--gold); transform:translateY(-2px); }
+.sitem.owned { border-color:var(--accent4); opacity:.6; cursor:default; }
+.sitem .si-icon { font-size:20px; margin-bottom:3px; }
+.sitem .si-name { font-size:9px; color:var(--text); margin-bottom:2px; line-height:1.3; }
+.sitem .si-price{ font-size:10px; color:var(--gold); }
+.sitem .si-desc { font-size:7px; color:var(--text2); margin-top:2px; }
+
+.kgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.kcard { background:var(--panel); border:2px solid var(--border); border-radius:4px; padding:9px; text-align:center; }
+.k-icon { font-size:20px; margin-bottom:4px; }
+.k-name { font-size:9px; color:var(--accent2); margin-bottom:6px; }
+.k-lv   { font-size:8px; color:var(--text2); margin-top:2px; }
+
+.logbox {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px;
+  padding:8px; height:200px; overflow-y:auto;
+}
+.lentry { font-size:10px; color:var(--text2); padding:2px 0; border-bottom:1px solid rgba(255,255,255,.04); animation:fin .3s ease; }
+.lentry .dtag { color:var(--accent2); margin-right:5px; }
+.lentry .hl   { color:var(--accent); }
+.lentry .gl   { color:var(--gold); }
+@keyframes fin { from{opacity:0;transform:translateY(-3px)} to{opacity:1;transform:none} }
+
+.evbox {
+  background:var(--panel2); border:2px solid var(--accent); border-radius:4px;
+  padding:12px; text-align:center; display:none; margin-bottom:10px;
+  animation: glow 2s ease-in-out infinite;
+}
+.evbox.show { display:block; }
+@keyframes glow { 0%,100%{box-shadow:0 0 10px rgba(232,180,248,.2)} 50%{box-shadow:0 0 22px rgba(232,180,248,.45)} }
+.ev-title { font-size:11px; color:var(--accent); margin-bottom:4px; }
+.ev-desc  { font-size:9px; color:var(--text2); margin-bottom:9px; }
+.ev-btns  { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+.ev-btn   {
+  background:var(--panel); border:1px solid var(--border);
+  color:var(--text); font-family:var(--px); font-size:9px;
+  padding:5px 11px; cursor:pointer; border-radius:2px; transition:all .15s;
+}
+.ev-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+.sleepbtn {
+  width:100%; background:var(--panel2); border:2px solid var(--border);
+  color:var(--accent); font-family:var(--px); font-size:11px;
+  padding:8px; cursor:pointer; border-radius:4px; letter-spacing:2px; transition:all .2s;
+}
+.sleepbtn:hover { border-color:var(--accent); background:rgba(232,180,248,.09); box-shadow:0 0 14px rgba(232,180,248,.2); }
+
+/* ── 1-5. 오른쪽 열: 옷장·저장 ── */
+.rightcol { display:flex; flex-direction:column; gap:8px; }
+
+.wbox { background:var(--panel); border:2px solid var(--border); border-radius:4px; padding:8px; }
+.wbox-title { font-size:9px; color:var(--text2); letter-spacing:2px; text-align:center; border-bottom:1px solid var(--border); padding-bottom:3px; margin-bottom:6px; }
+.wgrid { display:grid; grid-template-columns:repeat(2,1fr); gap:5px; }
+.wslot {
+  aspect-ratio:1; background:#07050f; border:2px solid var(--border);
+  border-radius:2px; cursor:pointer; display:flex; align-items:center;
+  justify-content:center; font-size:20px; transition:all .15s;
+  flex-direction:column; gap:2px;
+}
+.wslot:hover:not(.locked)  { border-color:var(--accent); transform:scale(1.06); }
+.wslot.equipped             { border-color:var(--gold)!important; box-shadow:0 0 8px rgba(255,215,0,.35); }
+.wslot.locked               { opacity:.3; cursor:not-allowed; font-size:11px; }
+.wslot .wname { font-size:7px; color:var(--text2); }
+.wslot.equipped .wname { color:var(--gold); }
+
+/* save/export panel */
+.save-panel {
+  background:var(--panel); border:2px solid var(--border); border-radius:4px; padding:8px;
+}
+.save-title { font-size:9px; color:var(--text2); letter-spacing:2px; text-align:center; border-bottom:1px solid var(--border); padding-bottom:3px; margin-bottom:7px; }
+.save-btn {
+  width:100%; background:var(--panel2); border:1px solid var(--border);
+  color:var(--text2); font-family:var(--px); font-size:9px;
+  padding:5px; cursor:pointer; border-radius:2px; margin-bottom:4px;
+  transition:all .15s; letter-spacing:1px; text-align:center;
+}
+.save-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+.save-btn.danger:hover { border-color:#cc7777; color:#cc7777; }
+
+/* export modal */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.75);
+  display:flex; align-items:center; justify-content:center; z-index:997;
+}
+.modal-box {
+  background:var(--panel2); border:2px solid var(--accent2); border-radius:6px;
+  padding:20px; width:420px; max-width:90vw;
+}
+.modal-title { font-size:12px; color:var(--accent2); margin-bottom:10px; letter-spacing:2px; }
+.modal-desc  { font-size:9px; color:var(--text2); margin-bottom:8px; line-height:1.6; }
+.modal-textarea {
+  width:100%; height:80px; background:#0a0818; border:1px solid var(--border);
+  color:var(--accent); font-family:var(--px); font-size:9px; padding:6px;
+  border-radius:2px; resize:none; outline:none;
+}
+.modal-btns { display:flex; gap:8px; margin-top:10px; }
+.modal-btn {
+  flex:1; background:var(--panel); border:1px solid var(--border);
+  color:var(--text); font-family:var(--px); font-size:9px;
+  padding:6px; cursor:pointer; border-radius:2px; transition:all .15s;
+}
+.modal-btn:hover { border-color:var(--accent2); color:var(--accent2); }
+.modal-btn.ok { border-color:var(--accent); color:var(--accent); }
+.modal-btn.ok:hover { background:rgba(232,180,248,.1); }
+
+.notif {
+  position:fixed; top:18px; right:18px; background:var(--panel2);
+  border:2px solid var(--accent); border-radius:4px; padding:9px 14px;
+  font-size:11px; color:var(--accent); z-index:999; max-width:250px;
+  animation: nslide .3s ease, nfade .3s ease 2.6s forwards;
+}
+@keyframes nslide { from{transform:translateX(110%);opacity:0} to{transform:none;opacity:1} }
+@keyframes nfade  { to{opacity:0;transform:translateX(18px)} }
+
+.lvup-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.72);
+  display:flex; align-items:center; justify-content:center; z-index:998;
+}
+.lvup-box {
+  background:var(--panel2); border:3px solid var(--gold); border-radius:8px;
+  padding:28px 38px; text-align:center; box-shadow:0 0 40px rgba(255,215,0,.3);
+  animation: scl .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes scl { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+.lvup-icon  { font-size:44px; margin-bottom:10px; }
+.lvup-title { font-size:16px; color:var(--gold); margin-bottom:7px; }
+.lvup-sub   { font-size:11px; color:var(--text2); margin-bottom:14px; line-height:1.7; }
+.lvup-btn   { background:var(--gold); color:#000; border:none; font-family:var(--px); font-size:11px; padding:7px 18px; cursor:pointer; border-radius:2px; }
+
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:var(--panel); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+</style>
+</head>
+<!-- ╔══════════════════════════════════════════════╗
+     ║  2. HTML 구조                                 ║
+     ║  화면에 보이는 뼈대. 헤더/탑바/메인 3단 구성  ║
+     ╚══════════════════════════════════════════════╝ -->
+<body>
+<div class="wrap">
+
+  <!-- ── 2-1. 헤더: 제목 + 저장 표시 ── -->
+  <div class="header">
+    <h1>✦ 나의 성장 일기 ✦</h1>
+    <p>— grow into the person you want to be —</p>
+    <div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:12px;">
+      <span id="saveIndicator" style="font-size:9px;color:var(--accent4);letter-spacing:1px;">💾 자동저장 켜짐</span>
+      <button onclick="resetGame()" style="background:transparent;border:1px solid #553333;color:#cc8888;font-family:var(--px);font-size:9px;padding:2px 8px;cursor:pointer;border-radius:2px;letter-spacing:1px;">🗑 처음부터</button>
+    </div>
+  </div>
+
+  <!-- ── 2-2. 탑바: Day / 나이 / 에너지 / XP / 골드 ── -->
+  <div class="topbar">
+    <div class="topbar-item">📅 Day <strong id="tDay">1</strong></div>
+    <span class="topbar-sep">|</span>
+    <div class="topbar-item">🎂 <strong id="tAge">18</strong>세</div>
+    <span class="topbar-sep">|</span>
+    <div class="topbar-item">
+      ⚡
+      <div class="bar-track"><div class="bar-fill en-fill" id="enBar"></div></div>
+      <span id="enVal" style="font-size:10px;color:var(--text2)"></span>
+    </div>
+    <div class="topbar-item">
+      ✨XP
+      <div class="bar-track"><div class="bar-fill xp-fill" id="xpBar"></div></div>
+      <span id="xpVal" style="font-size:10px;color:var(--text2)"></span>
+    </div>
+    <div class="gold-badge">💰 <span id="tGold">100</span>G</div>
+  </div>
+
+  <!-- ── 2-3. 이벤트 박스: 랜덤 이벤트 팝업 ── -->
+  <div class="evbox" id="evbox">
+    <div class="ev-title" id="evTitle"></div>
+    <div class="ev-desc"  id="evDesc"></div>
+    <div class="ev-btns"  id="evBtns"></div>
+  </div>
+
+  <!-- ── 2-4. 메인 3단 레이아웃 ── -->
+  <div class="main">
+    <!-- LEFT: character + stats + gold -->
+    <div class="left">
+      <div class="charbox">
+        <input class="char-name" id="charName" value="나의 캐릭터" maxlength="10">
+        <canvas id="charCanvas" width="96" height="120" title="클릭 → 헤어 색상 변경!"></canvas>
+        <div class="char-job"   id="charJob">📚 학생</div>
+        <div class="char-title" id="charTitle">평범한 학생</div>
+        <div class="char-lv"    id="charLv">Lv.1</div>
+      </div>
+
+      <div class="sbox">
+        <div class="sbox-title">★ STATS ★</div>
+        <div class="srow"><span class="sname">💪 체력</span><div class="sbar"><div class="sbar-fill" id="sb_str" style="background:#ff6b6b"></div></div><span class="sval" id="sv_str" style="color:#ff6b6b"></span></div>
+        <div class="srow"><span class="sname">📚 지식</span><div class="sbar"><div class="sbar-fill" id="sb_int" style="background:#7ee8fa"></div></div><span class="sval" id="sv_int" style="color:#7ee8fa"></span></div>
+        <div class="srow"><span class="sname">✨ 감성</span><div class="sbar"><div class="sbar-fill" id="sb_cha" style="background:#e8b4f8"></div></div><span class="sval" id="sv_cha" style="color:#e8b4f8"></span></div>
+        <div class="srow"><span class="sname">🎨 창의</span><div class="sbar"><div class="sbar-fill" id="sb_cre" style="background:#ffd6a5"></div></div><span class="sval" id="sv_cre" style="color:#ffd6a5"></span></div>
+        <div class="srow"><span class="sname">🌿 건강</span><div class="sbar"><div class="sbar-fill" id="sb_hlt" style="background:#a8e6cf"></div></div><span class="sval" id="sv_hlt" style="color:#a8e6cf"></span></div>
+        <div class="srow"><span class="sname">😊 행복</span><div class="sbar"><div class="sbar-fill" id="sb_hap" style="background:#ffd700"></div></div><span class="sval" id="sv_hap" style="color:#ffd700"></span></div>
+      </div>
+
+      <div class="gold-panel">
+        <div class="g-label">💰 WALLET</div>
+        <div class="g-val"><span id="gpGold">100</span> G</div>
+        <div class="g-hint">아르바이트·직업 수입·<br>이벤트로 모아요!</div>
+      </div>
+    </div>
+
+    <!-- MIDDLE: tabs + activities -->
+    <div class="middle">
+      <div class="tabs">
+        <button class="tab on"  onclick="switchTab(this,'act')">🌟 활동</button>
+        <button class="tab"     onclick="switchTab(this,'job')">💼 직업</button>
+        <button class="tab"     onclick="switchTab(this,'shop')">🏪 상점</button>
+        <button class="tab"     onclick="switchTab(this,'know')">📖 지식</button>
+        <button class="tab"     onclick="switchTab(this,'diary')">📝 일기</button>
+      </div>
+
+      <div class="tpanel on" id="tp-act"><div class="agrid" id="agrid"></div></div>
+      <div class="tpanel"    id="tp-job"><div class="jgrid" id="jgrid"></div></div>
+      <div class="tpanel"    id="tp-shop"><div class="sgrid" id="sgrid"></div></div>
+      <div class="tpanel"    id="tp-know"><div class="kgrid" id="kgrid"></div></div>
+      <div class="tpanel"    id="tp-diary"><div class="logbox" id="logbox"></div></div>
+
+      <button class="sleepbtn" onclick="nextDay()">💤 하루 마무리 → 다음날</button>
+    </div>
+
+    <!-- RIGHT: wardrobe + save -->
+    <div class="rightcol">
+      <div class="wbox">
+        <div class="wbox-title">👗 옷장</div>
+        <div class="wgrid" id="wgrid"></div>
+      </div>
+
+      <div class="save-panel">
+        <div class="save-title">💾 SAVE</div>
+        <div id="saveIndicator" style="text-align:center;font-size:8px;color:var(--accent4);margin-bottom:6px;letter-spacing:1px;">자동저장 켜짐</div>
+        <button class="save-btn" onclick="setPlayerId()">🔑 아이디 설정</button>
+        <button class="save-btn" onclick="exportSave()">📤 내보내기</button>
+        <button class="save-btn" onclick="importSave()">📥 코드 불러오기</button>
+        <button class="save-btn danger" onclick="resetGame()">🗑 처음부터</button>
+        <div style="font-size:7px;color:var(--text2);margin-top:5px;line-height:1.6;text-align:center;">아이디: 같은 브라우저<br>코드: 다른 기기에서<br>이어할 수 있어요!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ╔══════════════════════════════════════════════╗
+   ║  3. 데이터 정의                               ║
+   ║  여기만 수정하면 옷·직업·활동·이벤트 변경 가능 ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 3-1. 옷 목록 ── icon/name/price/bonus/style */
+const OUTFITS = [
+  { icon:'👕', name:'기본 셔츠',   price:0,   bonus:{},           style:'shirt' },
+  { icon:'👗', name:'원피스',      price:80,  bonus:{cha:3},      style:'dress' },
+  { icon:'🧥', name:'트렌치코트', price:150, bonus:{cha:5,hap:2},style:'coat' },
+  { icon:'👘', name:'한복',        price:200, bonus:{cha:8,cre:3},style:'hanbok' },
+  { icon:'🥻', name:'드레스',      price:300, bonus:{cha:10},     style:'fancydress' },
+  { icon:'🧣', name:'겨울코디',    price:120, bonus:{hlt:4},      style:'winter' },
+  { icon:'👚', name:'캐주얼',      price:60,  bonus:{hap:3},      style:'casual' },
+  { icon:'🎓', name:'졸업가운',    price:500, bonus:{int:8,cha:5},style:'gown' },
+];
+
+/* ── 3-2. 직업 목록 ── id/name/icon/pay/req(취업조건)/payDesc */
+const JOBS = [
+  { id:'student',    name:'학생',        icon:'📚', pay:0,   req:{},                         payDesc:'무급' },
+  { id:'parttime',   name:'아르바이트',  icon:'🛒', pay:15,  req:{},                         payDesc:'15G/일' },
+  { id:'tutor',      name:'과외 선생님', icon:'✏️', pay:35,  req:{int:30},                   payDesc:'35G/일' },
+  { id:'artist',     name:'예술가',      icon:'🎨', pay:28,  req:{cre:30,cha:20},            payDesc:'28G/일' },
+  { id:'athlete',    name:'운동선수',    icon:'🏅', pay:40,  req:{str:40,hlt:30},            payDesc:'40G/일' },
+  { id:'writer',     name:'작가',        icon:'📝', pay:32,  req:{int:35,cre:25},            payDesc:'32G/일' },
+  { id:'musician',   name:'뮤지션',      icon:'🎵', pay:45,  req:{cha:40,cre:35},            payDesc:'45G/일' },
+  { id:'chef',       name:'셰프',        icon:'👨‍🍳',pay:38,  req:{cre:40,hap:30},            payDesc:'38G/일' },
+  { id:'programmer', name:'프로그래머',  icon:'💻', pay:70,  req:{int:50,cre:30},            payDesc:'70G/일' },
+  { id:'doctor',     name:'의사',        icon:'🩺', pay:80,  req:{int:60,hlt:40},            payDesc:'80G/일' },
+  { id:'professor',  name:'교수',        icon:'🎓', pay:90,  req:{int:70,cha:40},            payDesc:'90G/일' },
+  { id:'idol',       name:'아이돌',      icon:'⭐', pay:120, req:{cha:70,str:50,hap:60},    payDesc:'120G/일' },
+];
+
+/* ── 3-3. 활동 목록 ── id/name/cost(에너지)/eff(효과)/gold */
+const ACTIVITIES = [
+  { id:'study',    icon:'📚', name:'공부하기',    cost:2, eff:{int:[1,2],xp:[8,14]},          gold:null, tags:[{c:'#7ee8fa',t:'지식↑'},{c:'#a8e6cf',t:'XP↑'}],    acc:'#7ee8fa', shd:'rgba(126,232,250,.3)' },
+  { id:'exercise', icon:'🏃', name:'운동하기',    cost:2, eff:{str:[1,2],hlt:[1,2],xp:[6,12]},gold:null, tags:[{c:'#ff6b6b',t:'체력↑'},{c:'#a8e6cf',t:'건강↑'}],  acc:'#ff6b6b', shd:'rgba(255,107,107,.3)' },
+  { id:'art',      icon:'🎨', name:'예술활동',    cost:2, eff:{cre:[1,3],cha:[1,2],xp:[7,12]},gold:null, tags:[{c:'#ffd6a5',t:'창의↑'},{c:'#e8b4f8',t:'감성↑'}],  acc:'#ffd6a5', shd:'rgba(255,214,165,.3)' },
+  { id:'walk',     icon:'🌿', name:'산책하기',    cost:1, eff:{hap:[1,3],hlt:[1,2],xp:[4,8]}, gold:null, tags:[{c:'#ffd700',t:'행복↑'},{c:'#a8e6cf',t:'건강↑'}],   acc:'#a8e6cf', shd:'rgba(168,230,207,.3)' },
+  { id:'work',     icon:'💰', name:'아르바이트',  cost:3, eff:{hap:[-1,-1],xp:[4,8]},          gold:[15,35],tags:[{c:'#ffd700',t:'💰+15~35'},{c:'#ff9999',t:'행복-1'}],acc:'#ffd700',shd:'rgba(255,215,0,.3)' },
+  { id:'social',   icon:'👥', name:'친구 만나기', cost:2, eff:{cha:[1,3],hap:[2,4],xp:[6,11]},gold:null, tags:[{c:'#e8b4f8',t:'감성↑'},{c:'#ffd700',t:'행복↑'}],   acc:'#e8b4f8', shd:'rgba(232,180,248,.3)' },
+  { id:'cook',     icon:'🍳', name:'요리하기',    cost:1, eff:{cre:[1,2],hap:[1,2],hlt:[1,1],xp:[5,9]},gold:null,tags:[{c:'#ffd6a5',t:'창의↑'},{c:'#a8e6cf',t:'건강↑'}],acc:'#ffd6a5',shd:'rgba(255,214,165,.25)'},
+  { id:'meditate', icon:'🧘', name:'명상하기',    cost:1, eff:{hap:[2,4],hlt:[1,2],xp:[4,7]}, gold:null, tags:[{c:'#ffd700',t:'행복↑'},{c:'#a8e6cf',t:'건강↑'}],   acc:'#7ee8fa', shd:'rgba(126,232,250,.2)' },
+  { id:'music',    icon:'🎵', name:'음악 연습',    cost:2, eff:{cha:[1,3],cre:[1,2],xp:[7,11]},gold:null, tags:[{c:'#e8b4f8',t:'감성↑'},{c:'#ffd6a5',t:'창의↑'}],  acc:'#e8b4f8', shd:'rgba(232,180,248,.3)' },
+];
+
+/* ── 3-4. 상점 서비스 목록 ── icon/name/price/bonus/desc */
+const SHOP_SERVICES = [
+  { icon:'📖', name:'독서 클럽',    price:50,  bonus:{int:5},        desc:'즉시 지식+5' },
+  { icon:'🏋️', name:'헬스장',      price:80,  bonus:{str:8,hlt:5},  desc:'체력+8, 건강+5' },
+  { icon:'🎨', name:'미술 클래스', price:70,  bonus:{cre:8,cha:3},  desc:'창의+8, 감성+3' },
+  { icon:'🍀', name:'행운의 부적', price:30,  bonus:{hap:10},        desc:'즉시 행복+10' },
+  { icon:'💆', name:'스파',         price:60,  bonus:{hap:8,hlt:5},  desc:'행복+8, 건강+5' },
+  { icon:'🎓', name:'특강 수강',    price:120, bonus:{int:15,cre:8}, desc:'지식+15, 창의+8' },
+  { icon:'🧃', name:'건강주스',     price:20,  bonus:{hlt:5},         desc:'즉시 건강+5' },
+  { icon:'🎭', name:'연극 클래스', price:90,  bonus:{cha:12,cre:5}, desc:'감성+12, 창의+5' },
+];
+
+/* ── 3-5. 지식 과목 6개 ── */
+const KNOWLEDGE_DATA = { '수학':'🔢','언어':'💬','과학':'🔬','역사':'📜','예술':'🖼️','철학':'🌀' };
+/* ── 3-6. 지식 과목별 색상 ── */
+const K_COLORS = { '수학':'#7ee8fa','언어':'#e8b4f8','과학':'#a8e6cf','역사':'#ffd6a5','예술':'#ff9eb5','철학':'#c8b4f8' };
+
+/* ── 3-7. 칭호 목록 ── need(스탯 합산 기준값) / t(칭호 이름) */
+const TITLES = [
+  {need:0,   t:'평범한 학생'},
+  {need:30,  t:'성장하는 청춘'},
+  {need:80,  t:'노력하는 사람'},
+  {need:160, t:'빛나는 청년'},
+  {need:280, t:'실력자'},
+  {need:420, t:'지혜로운 어른'},
+  {need:580, t:'완성된 어른'},
+  {need:780, t:'전설의 어른'},
+];
+
+/* ── 3-8. 랜덤 이벤트 목록 ── title/desc/opts(선택지) */
+const EVENTS = [
+  { title:'📚 희귀 책 발견!', desc:'도서관 구석에서 귀한 책을 발견했습니다.',
+    opts:[{t:'빌린다',eff:{int:6,hap:3},g:0,msg:'지식+6, 행복+3!'},{t:'지나친다',eff:{},g:0,msg:'다음에 오자...'}] },
+  { title:'🎪 마을 축제!', desc:'마을에 큰 축제가 열렸어요!',
+    opts:[{t:'신나게 즐긴다',eff:{hap:10,cha:4},g:-15,msg:'행복+10, 감성+4! (-15G)'},{t:'공연에 참가',eff:{cha:6,cre:5,hap:6},g:40,msg:'공연 성공! +40G, 감성+6'}] },
+  { title:'💌 응원 편지', desc:'누군가로부터 따뜻한 편지가 왔습니다.',
+    opts:[{t:'감동받는다',eff:{hap:12,str:4},g:0,msg:'마음이 따뜻해졌다. 행복+12!'}] },
+  { title:'🌧 갑자기 비!', desc:'우산을 안 챙겼는데 비가 쏟아집니다.',
+    opts:[{t:'뛰어서 간다',eff:{hlt:-2,str:3},g:0,msg:'흠뻑 젖었다. 건강-2, 체력+3'},{t:'카페에서 기다린다',eff:{hap:4,cre:3},g:-10,msg:'커피 타임! 행복+4 (-10G)'}] },
+  { title:'🌟 특별 강의 초대!', desc:'유명 강사의 강의 초대장이 왔습니다. (80G)',
+    opts:[{t:'참가한다 (-80G)',eff:{int:10,xp:40},g:-80,msg:'훌륭한 강의! 지식+10, XP+40'},{t:'다음에',eff:{},g:0,msg:'다음 기회를 노리자.'}] },
+  { title:'🎁 길에서 돈을 주웠어요!', desc:'어디선가 떨어진 돈을 발견했습니다.',
+    opts:[{t:'경찰에 맡긴다',eff:{hap:8},g:0,msg:'착한 일을 했다! 행복+8'},{t:'일단 갖는다',eff:{hap:-3},g:30,msg:'+30G 획득... 행복-3'}] },
+  { title:'🏆 대회 참가 기회!', desc:'동네 대회 참가권이 생겼습니다.',
+    opts:[{t:'참가한다!',eff:{str:5,cha:4,hap:8},g:50,msg:'입상! +50G, 체력+5, 감성+4'},{t:'안 나간다',eff:{},g:0,msg:'다음에 도전하자.'}] },
+];
+
+/* ╔══════════════════════════════════════════════╗
+   ║  4. 저장 / 불러오기                          ║
+   ║  localStorage 기반 자동저장 + 코드 내보내기   ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 4-1. 저장 키 ── 아이디 기반, 기본 슬롯은 'growth_diary_save' */
+const SAVE_KEY = 'growth_diary_save';
+let saveId = localStorage.getItem('growth_diary_id') || '';
+
+/* ── 4-2. saveGame(): 현재 상태를 localStorage에 저장 */
+function saveGame(){
+  const key = saveId ? 'gd_' + saveId : SAVE_KEY;
+  const data = { ...G, hairColor };
+  localStorage.setItem(key, JSON.stringify(data));
+  const ind = document.getElementById('saveIndicator');
+  const label = saveId ? '🔑 ' + saveId : '자동저장 켜짐';
+  if(ind){ ind.textContent='저장됨 ✓'; setTimeout(()=>{ ind.textContent=label; },1500); }
+}
+
+/* ── 4-3. loadGame(): 저장된 데이터 불러오기 */
+function loadGame(){
+  try {
+    const key = saveId ? 'gd_' + saveId : SAVE_KEY;
+    const raw = localStorage.getItem(key);
+    if(!raw) return false;
+    const data = JSON.parse(raw);
+    Object.assign(G, data);
+    if(data.hairColor) hairColor = data.hairColor;
+    return true;
+  } catch(e){ return false; }
+}
+
+/* ── 4-4. resetGame(): 저장 삭제 후 초기화 */
+function resetGame(){
+  if(!confirm('정말 처음부터 다시 시작할까요? 저장 데이터가 삭제됩니다!')) return;
+  const key = saveId ? 'gd_' + saveId : SAVE_KEY;
+  localStorage.removeItem(key);
+  location.reload();
+}
+
+/* ── 4-5. setPlayerId(): 아이디 설정 / 변경
+   같은 브라우저 안에서 아이디로 여러 세이브 슬롯 관리 가능
+   기존 아이디 입력 시 해당 데이터 불러오기 */
+function setPlayerId(){
+  const cur = saveId ? `현재 아이디: ${saveId}\n\n` : '';
+  const input = prompt(`${cur}저장 아이디를 입력하세요 (영문+숫자, 최대 12자)\n예: sunny77 / rose2025\n\n기존 아이디를 입력하면 해당 데이터를 불러와요!`);
+  if(input === null) return; // 취소
+  const id = input.trim().replace(/[^a-zA-Z0-9]/g,'').slice(0,12);
+  if(!id){ notify('⚠️ 영문·숫자만 사용 가능해요!'); return; }
+  saveId = id;
+  localStorage.setItem('growth_diary_id', id);
+  // 해당 아이디 데이터가 있으면 불러오기
+  const existing = localStorage.getItem('gd_' + id);
+  if(existing){
+    try {
+      const data = JSON.parse(existing);
+      Object.assign(G, data);
+      if(data.hairColor) hairColor = data.hairColor;
+      notify('✅ ' + id + ' 데이터를 불러왔어요!');
+      render();
+    } catch(e){ notify('⚠️ 데이터를 읽을 수 없어요.'); }
+  } else {
+    notify('🔑 아이디 설정: ' + id);
+    saveGame();
+  }
+  const ind = document.getElementById('saveIndicator');
+  if(ind) ind.textContent = '🔑 ' + id;
+}
+
+/* ── 4-6. exportSave(): 핵심 수치만 압축한 짧은 코드로 내보내기
+   JSON 전체 대신 필요한 값만 골라 직렬화 → Base64 → 10자씩 끊어 표시 */
+function exportSave(){
+  const slim = {
+    d:G.day, a:G.age, e:G.energy, me:G.maxEnergy,
+    x:G.xp, xn:G.xpNext, lv:G.level, g:G.gold,
+    s:[G.stats.str,G.stats.int,G.stats.cha,G.stats.cre,G.stats.hlt,G.stats.hap],
+    eq:G.equippedOutfit, inv:G.inventory, j:G.jobId,
+    k:Object.values(G.know), hc:hairColor
+  };
+  const code = btoa(unescape(encodeURIComponent(JSON.stringify(slim))));
+  // 10자마다 - 로 끊어서 가독성 향상
+  const display = code.match(/.{1,10}/g).join('-');
+  const d = document.createElement('div'); d.className='modal-overlay';
+  d.innerHTML=`<div class="modal-box">
+    <div class="modal-title">📤 세이브 내보내기</div>
+    <div class="modal-desc">아래 코드를 메모해두세요.<br>다른 기기에서 '코드 불러오기'로 이어할 수 있어요!</div>
+    <textarea class="modal-textarea" id="exportTxt" readonly>${display}</textarea>
+    <div class="modal-btns">
+      <button class="modal-btn ok" onclick="copyExport()">📋 복사하기</button>
+      <button class="modal-btn" onclick="this.closest('.modal-overlay').remove()">닫기</button>
+    </div>
+  </div>`;
+  document.body.appendChild(d);
+  setTimeout(()=>{ const t=document.getElementById('exportTxt'); if(t) t.select(); },100);
+}
+
+/* ── 4-7. copyExport(): 내보내기 코드 클립보드 복사 */
+function copyExport(){
+  const t=document.getElementById('exportTxt');
+  if(!t) return;
+  t.select(); document.execCommand('copy');
+  notify('📋 복사됐어요!');
+}
+
+/* ── 4-8. importSave(): 코드 붙여넣기 모달 열기 */
+function importSave(){
+  const d = document.createElement('div'); d.className='modal-overlay';
+  d.innerHTML=`<div class="modal-box">
+    <div class="modal-title">📥 코드로 불러오기</div>
+    <div class="modal-desc">내보내기 코드를 붙여넣기 하세요.<br>대시(-)가 포함되어 있어도 괜찮아요!</div>
+    <textarea class="modal-textarea" id="importTxt" placeholder="xxxx-xxxx-xxxx-..."></textarea>
+    <div class="modal-btns">
+      <button class="modal-btn ok" onclick="doImport()">✅ 불러오기</button>
+      <button class="modal-btn" onclick="this.closest('.modal-overlay').remove()">취소</button>
+    </div>
+  </div>`;
+  document.body.appendChild(d);
+}
+
+/* ── 4-9. doImport(): 코드 파싱 후 데이터 복원
+   대시 제거 → Base64 디코딩 → slim 포맷 → G 객체에 복원 */
+function doImport(){
+  const t=document.getElementById('importTxt');
+  if(!t||!t.value.trim()){ notify('⚠️ 코드를 입력해주세요!'); return; }
+  try {
+    const raw = t.value.trim().replace(/-/g,''); // 대시 모두 제거
+    const json = decodeURIComponent(escape(atob(raw)));
+    const slim = JSON.parse(json);
+    if(slim.s){ // 압축 포맷
+      G.day=slim.d; G.age=slim.a; G.energy=slim.e; G.maxEnergy=slim.me;
+      G.xp=slim.x; G.xpNext=slim.xn; G.level=slim.lv; G.gold=slim.g;
+      G.stats={str:slim.s[0],int:slim.s[1],cha:slim.s[2],cre:slim.s[3],hlt:slim.s[4],hap:slim.s[5]};
+      G.equippedOutfit=slim.eq; G.inventory=slim.inv; G.jobId=slim.j;
+      const keys=Object.keys(G.know);
+      slim.k.forEach((v,i)=>{ if(keys[i]) G.know[keys[i]]=v; });
+      hairColor=slim.hc||hairColor;
+    } else { // 구버전 전체 포맷 호환
+      Object.assign(G, slim);
+      if(slim.hairColor) hairColor=slim.hairColor;
+    }
+    saveGame();
+    notify('✅ 불러오기 성공!');
+    document.querySelector('.modal-overlay')?.remove();
+    render();
+  } catch(e){ notify('⚠️ 올바르지 않은 코드예요.'); }
+}
+
+/* ╔══════════════════════════════════════════════╗
+   ║  5. 게임 상태 (STATE)                        ║
+   ║  현재 게임의 모든 수치. 저장/불러오기 대상    ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 5-1. G 객체 ── 이 값들이 플레이 중 계속 변함
+   day/age: 날짜·나이
+   energy/maxEnergy: 에너지
+   xp/xpNext/level: 경험치·레벨업 기준·현재레벨
+   gold: 골드 (시작값 변경 가능)
+   stats: 6개 스탯
+   equippedOutfit/inventory: 착용 옷·보유 옷 목록
+   jobId: 현재 직업
+   know: 지식 6과목 수치 */
+const G = {
+  day:1, age:18, energy:10, maxEnergy:10,
+  xp:0, xpNext:150, level:1, gold:100,
+  stats:{ str:10, int:10, cha:10, cre:10, hlt:10, hap:10 },
+  equippedOutfit:0, inventory:[0], jobId:'student',
+  know: Object.fromEntries(Object.keys(KNOWLEDGE_DATA).map(k=>[k,0])),
+};
+
+/* ╔══════════════════════════════════════════════╗
+   ║  6. 픽셀 캐릭터 그리기                       ║
+   ║  캔버스에 직접 픽셀 아트로 캐릭터를 렌더링    ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 6-1. 헤어 색상 목록 ── 클릭할 때마다 랜덤 변경 */
+const HAIR_COLORS = ['#3d2b1f','#a0522d','#d4a017','#ff85b3','#7b68ee','#2e8b57','#4682b4','#cc4488'];
+let hairColor = HAIR_COLORS[Math.floor(Math.random()*HAIR_COLORS.length)];
+
+/* ── 6-2. drawChar(): 메인 캐릭터 픽셀 아트 그리기
+   style 값에 따라 옷별로 다른 픽셀 아트 렌더링
+   shirt / dress / coat / hanbok /
+   fancydress / winter / casual / gown */
+function drawChar(){
+  const cv = document.getElementById('charCanvas');
+  const cx = cv.getContext('2d');
+  const S = 4;
+  cx.clearRect(0,0,96,120);
+  cx.save();
+  cx.translate(4, 0); // 오른쪽으로 4px 이동해서 중앙 정렬
+  const sk = '#f5c5a3';
+  const hc = hairColor;
+  const style = OUTFITS[G.equippedOutfit]?.style || 'shirt';
+
+  function p(x,y,c){ cx.fillStyle=c; cx.fillRect(x*S,y*S,S,S); }
+  function row(y,x1,x2,c){ for(let x=x1;x<=x2;x++) p(x,y,c); }
+  function alpha(c,a){ cx.globalAlpha=a; cx.fillStyle=c; }
+  function resetAlpha(){ cx.globalAlpha=1; }
+
+  /* ── ground shadow ── */
+  cx.fillStyle='rgba(0,0,0,.15)'; cx.fillRect(8,116,80,4);
+
+  /* ── hair back ── */
+  row(5,4,11,hc); row(6,3,12,hc);
+  p(3,7,hc); p(3,8,hc); p(12,7,hc); p(12,8,hc);
+
+  /* ── head ── */
+  for(let y=5;y<=11;y++) row(y,4,11,sk);
+  cx.fillStyle='rgba(200,140,110,.2)';
+  cx.fillRect(4*S,5*S,S,7*S); cx.fillRect(11*S,5*S,S,7*S);
+
+  /* ── hair top ── */
+  row(4,4,11,hc); row(3,5,10,hc); row(2,6,9,hc); row(1,6,9,hc);
+  p(5,1,hc); p(6,1,hc); p(7,1,hc); p(8,1,hc);
+  p(4,2,hc); p(5,2,hc); p(8,2,hc); p(9,2,hc);
+  cx.fillStyle='rgba(255,255,255,.25)'; cx.fillRect(6*S,2*S,2*S,S);
+
+  /* ── face ── */
+  p(5,6,'#1a1a2e'); p(6,6,'#2a2a40'); p(9,6,'#1a1a2e'); p(10,6,'#2a2a40'); // lashes
+  row(7,5,6,'#ddeeff'); row(7,9,10,'#ddeeff');
+  row(8,5,6,'#ddeeff'); row(8,9,10,'#ddeeff');
+  p(5,7,'#1a1a2e'); p(9,7,'#1a1a2e');
+  p(5,8,'#223355'); p(9,8,'#223355');
+  p(6,8,'#334466'); p(10,8,'#334466');
+  cx.fillStyle='rgba(255,255,255,.95)';
+  cx.fillRect(5*S+1,7*S+1,3,3); cx.fillRect(9*S+1,7*S+1,3,3);
+  cx.fillRect(6*S+2,8*S+2,2,2); cx.fillRect(10*S+2,8*S+2,2,2);
+  cx.fillStyle='rgba(195,135,115,.4)'; cx.fillRect(7*S+1,9*S,3,2);
+  p(6,10,'#d07070'); p(7,10,'#c05555'); p(8,10,'#d07070');
+  cx.fillStyle='rgba(210,150,140,.35)'; cx.fillRect(5*S,10*S,S,S); cx.fillRect(9*S,10*S,S,S);
+  cx.fillStyle='rgba(255,130,140,.3)';
+  cx.fillRect(4*S,9*S,S+2,S-1); cx.fillRect(11*S-2,9*S,S+2,S-1);
+
+  /* ── neck ── */
+  row(12,6,9,sk); row(13,7,8,sk);
+
+  /* ── 6-3. 옷별 픽셀 아트 분기 ── style 값에 따라 실행 */
+  const shoe = '#2a1a0e';
+
+  if(style === 'shirt'){
+    // 하늘색 셔츠 + 네이비 바지
+    const shirt='#6699cc', pant='#334477';
+    for(let y=14;y<=19;y++) row(y,3,12,shirt);
+    cx.fillStyle='rgba(255,255,255,.25)'; cx.fillRect(5*S,14*S,6*S,S);
+    cx.fillStyle='rgba(255,255,255,.12)'; cx.fillRect(4*S,15*S,2*S,4*S);
+    for(let y=14;y<=18;y++){ p(2,y,shirt); p(13,y,shirt); }
+    for(let y=19;y<=20;y++){ p(2,y,sk); p(13,y,sk); } p(1,20,sk); p(14,20,sk);
+    for(let y=20;y<=24;y++) row(y,3,12,pant);
+    cx.fillStyle='rgba(255,255,255,.07)'; cx.fillRect(4*S,20*S,3*S,4*S);
+    row(25,4,6,sk); row(25,9,11,sk); row(26,4,6,sk); row(26,9,11,sk);
+    row(27,3,7,shoe); row(27,8,12,shoe); row(28,3,8,shoe); row(28,8,13,shoe);
+
+  } else if(style === 'dress'){
+    // 핑크 원피스 - 위아래 한 덩어리, 플레어 스커트
+    const top='#e8829a', skirt='#f0a0b8', skirthigh='#f4bece';
+    for(let y=14;y<=19;y++) row(y,3,12,top);
+    cx.fillStyle='rgba(255,255,255,.3)'; cx.fillRect(5*S,14*S,6*S,S);
+    cx.fillStyle='rgba(255,255,255,.15)'; cx.fillRect(4*S,15*S,2*S,4*S);
+    for(let y=14;y<=18;y++){ p(2,y,top); p(13,y,top); }
+    p(2,19,sk); p(13,19,sk); p(1,19,sk); p(14,19,sk);
+    // flare skirt
+    row(20,3,12,skirt); row(21,2,13,skirt); row(22,2,13,skirthigh); row(23,1,14,skirt); row(24,1,14,skirt);
+    cx.fillStyle='rgba(255,255,255,.15)'; cx.fillRect(4*S,20*S,4*S,4*S);
+    // lace trim
+    cx.fillStyle='rgba(255,255,255,.5)';
+    for(let x=1;x<=14;x+=2) cx.fillRect(x*S,24*S,S,2);
+    row(25,4,6,sk); row(25,9,11,sk); row(26,4,6,sk); row(26,9,11,sk);
+    const dshoe='#cc6688';
+    row(27,3,7,dshoe); row(27,8,12,dshoe); row(28,3,8,dshoe); row(28,8,13,dshoe);
+    cx.fillStyle='rgba(255,255,255,.3)'; cx.fillRect(4*S,27*S,2,2); cx.fillRect(9*S,27*S,2,2);
+
+  } else if(style === 'coat'){
+    // 베이지/카멜 트렌치코트 - 길고 벨트 있음
+    const coat='#c8a87a', coatd='#a88a5a', belt='#7a5533', lining='#e8d0a8';
+    for(let y=14;y<=26;y++) row(y,2,13,coat);
+    cx.fillStyle='rgba(255,255,255,.2)'; cx.fillRect(5*S,14*S,6*S,S);
+    // 라펠(옷깃)
+    row(14,6,9,lining); row(15,6,9,lining); p(6,16,lining); p(9,16,lining);
+    // 가운데 단추선
+    cx.fillStyle=coatd;
+    for(let y=17;y<=25;y++) p(7,y,coatd);
+    // 단추
+    cx.fillStyle='#6a4a2a';
+    p(7,17,belt); p(7,19,belt); p(7,21,belt);
+    // 벨트
+    row(20,3,12,belt);
+    cx.fillStyle='#d4aa44'; cx.fillRect(7*S,20*S,S,S); // 버클
+    // 소매
+    for(let y=14;y<=20;y++){ p(2,y,coat); p(13,y,coat); }
+    for(let y=21;y<=22;y++){ p(2,y,coatd); p(13,y,coatd); }
+    p(2,23,sk); p(13,23,sk); p(1,23,sk); p(14,23,sk);
+    row(27,3,7,shoe); row(27,8,12,shoe); row(28,3,8,shoe); row(28,8,13,shoe);
+
+  } else if(style === 'hanbok'){
+    // 한복 - 저고리(흰/분홍)+치마(청록)
+    const jeogori='#f5e8f0', ribbon='#e87888', chima='#4a9988', chimahigh='#5ab0a0';
+    // 저고리
+    for(let y=14;y<=18;y++) row(y,3,12,jeogori);
+    cx.fillStyle='rgba(255,255,255,.4)'; cx.fillRect(5*S,14*S,6*S,S);
+    // 깃(고름 리본)
+    row(14,6,9,ribbon); row(15,7,8,ribbon);
+    p(6,16,ribbon); p(9,16,ribbon);
+    // 소매 - 색동
+    const sleeveCols=['#e87888','#f5e060','#6aaa66','#7888e8'];
+    for(let y=14;y<=18;y++){
+      p(2,y,sleeveCols[Math.floor((y-14)/1.3)%4]);
+      p(13,y,sleeveCols[Math.floor((y-14)/1.3)%4]);
+    }
+    p(2,19,sk); p(13,19,sk); p(1,19,sk); p(14,19,sk);
+    // 치마 - 풍성하게
+    row(19,3,12,chima); row(20,2,13,chima); row(21,2,13,chimahigh);
+    row(22,1,14,chima); row(23,1,14,chima); row(24,1,14,chimahigh);
+    cx.fillStyle='rgba(255,255,255,.12)'; cx.fillRect(3*S,19*S,4*S,5*S);
+    // 치마 끝 금색 선
+    cx.fillStyle='#d4aa44';
+    for(let x=1;x<=14;x++) cx.fillRect(x*S,24*S+2,S,2);
+    row(25,4,6,sk); row(25,9,11,sk); row(26,4,6,sk); row(26,9,11,sk);
+    const hshoe='#334455';
+    row(27,3,7,hshoe); row(27,8,12,hshoe); row(28,3,8,hshoe); row(28,8,13,hshoe);
+
+  } else if(style === 'fancydress'){
+    // 드레스 - 보라/라벤더 이브닝
+    const bodice='#9966cc', skirt='#bb88ee', shirthigh='#cc99ff', glitter='#ddbbff';
+    for(let y=14;y<=18;y++) row(y,4,11,bodice);
+    cx.fillStyle='rgba(255,255,255,.3)'; cx.fillRect(5*S,14*S,6*S,S);
+    cx.fillStyle='rgba(255,255,255,.15)'; cx.fillRect(5*S,15*S,S,3*S);
+    // 민소매 - 어깨끈만
+    p(4,14,bodice); p(11,14,bodice); p(4,13,bodice); p(11,13,bodice);
+    p(2,19,sk); p(13,19,sk); p(1,20,sk); p(14,20,sk);
+    p(2,18,sk); p(13,18,sk);
+    // 볼륨 스커트
+    row(19,3,12,skirt); row(20,2,13,skirt); row(21,2,13,shirthigh);
+    row(22,1,14,skirt); row(23,1,14,shirthigh); row(24,0,15,skirt);
+    cx.fillStyle='rgba(255,255,255,.18)'; cx.fillRect(3*S,19*S,4*S,5*S);
+    // 반짝이
+    cx.fillStyle=glitter;
+    [3,6,9,12,1,5,10,14].forEach((x,i)=>{ if(i<8) cx.fillRect(x*S,21*S+(i%3)*S,2,2); });
+    // 하이힐
+    row(25,4,6,sk); row(25,9,11,sk); row(26,5,6,sk); row(26,9,10,sk);
+    const fshoe='#6633aa';
+    row(27,4,8,fshoe); row(27,9,12,fshoe); row(28,4,8,fshoe); row(28,9,13,fshoe);
+    p(6,29,fshoe); p(11,29,fshoe); // heel
+
+  } else if(style === 'winter'){
+    // 겨울 코디 - 흰 터틀넥 + 머스타드 카디건 + 청바지
+    const turtle='#eeeef8', cardigan='#d4aa33', jeans='#4466aa', jeanslight='#5577cc';
+    // 터틀넥
+    row(12,6,9,turtle); row(13,6,9,turtle);
+    for(let y=14;y<=19;y++) row(y,3,12,turtle);
+    cx.fillStyle='rgba(255,255,255,.3)'; cx.fillRect(5*S,14*S,6*S,S);
+    // 카디건 (오버래이)
+    const cw = cardigan;
+    p(3,14,cw); p(12,14,cw);
+    for(let y=15;y<=22;y++){ p(3,y,cw); p(4,y,cw); p(11,y,cw); p(12,y,cw); }
+    // 카디건 단추
+    cx.fillStyle='#aa8822'; p(7,17,cw); p(7,19,cw);
+    // 소매
+    for(let y=14;y<=20;y++){ p(2,y,cw); p(13,y,cw); }
+    p(2,21,sk); p(13,21,sk); p(1,21,sk); p(14,21,sk);
+    // 청바지
+    for(let y=20;y<=24;y++) row(y,3,12,jeans);
+    row(20,5,10,jeanslight); // 청바지 밝은 부분
+    cx.fillStyle='rgba(255,255,255,.1)'; cx.fillRect(5*S,20*S,2*S,4*S);
+    row(25,4,6,sk); row(25,9,11,sk); row(26,4,6,sk); row(26,9,11,sk);
+    // 부츠
+    const boot='#553322';
+    row(27,3,7,boot); row(27,8,12,boot);
+    row(28,3,8,boot); row(28,8,13,boot);
+    row(29,3,8,boot); row(29,8,13,boot);
+
+  } else if(style === 'casual'){
+    // 캐주얼 - 연두 후드티 + 흰 반바지
+    const hoodie='#88bb66', hoodied='#6a9950', shorts='#eeeecc', shortsd='#ccccaa';
+    for(let y=14;y<=21;y++) row(y,3,12,hoodie);
+    cx.fillStyle='rgba(255,255,255,.25)'; cx.fillRect(5*S,14*S,6*S,S);
+    cx.fillStyle='rgba(255,255,255,.12)'; cx.fillRect(4*S,15*S,2*S,5*S);
+    // 후드
+    row(13,4,11,hoodie); row(12,5,10,hoodie);
+    // 주머니
+    cx.fillStyle=hoodied; cx.fillRect(5*S,19*S,2*S,2*S); cx.fillRect(9*S,19*S,2*S,2*S);
+    // 소매
+    for(let y=14;y<=20;y++){ p(2,y,hoodie); p(13,y,hoodie); }
+    p(2,21,sk); p(13,21,sk); p(1,21,sk); p(14,21,sk);
+    // 반바지
+    row(22,3,12,shorts); row(23,3,12,shorts); row(24,4,11,shortsd);
+    cx.fillStyle='rgba(0,0,0,.08)'; cx.fillRect(7*S,22*S,S,2*S);
+    row(25,4,6,sk); row(25,9,11,sk); row(26,4,6,sk); row(26,9,11,sk);
+    // 스니커즈
+    const sneak='#eeeeee', sneakd='#cccccc';
+    row(27,3,7,sneak); row(27,8,12,sneak);
+    row(28,3,8,sneak); row(28,8,13,sneak);
+    cx.fillStyle=sneakd; cx.fillRect(3*S,28*S,5*S,S); cx.fillRect(8*S,28*S,5*S,S);
+    cx.fillStyle='#88bb66'; // 초록 줄
+    cx.fillRect(3*S,27*S+2,5*S,2); cx.fillRect(8*S,27*S+2,5*S,2);
+
+  } else if(style === 'gown'){
+    // 졸업가운 - 검정 가운 + 보라 모자
+    const gown='#1a1a2e', gownh='#2a2a4e', trim='#8866cc', cap='#553399', capboard='#2a1a44';
+    // 가운
+    for(let y=14;y<=26;y++) row(y,2,13,gown);
+    cx.fillStyle='rgba(255,255,255,.12)'; cx.fillRect(5*S,14*S,6*S,S);
+    cx.fillStyle=gownh; cx.fillRect(4*S,15*S,S,10*S); cx.fillRect(11*S,15*S,S,10*S);
+    // 트림 (소매 끝)
+    for(let y=14;y<=22;y++){ p(2,y,gown); p(13,y,gown); }
+    row(22,2,4,trim); row(22,11,13,trim); // 소매 트림
+    p(2,23,sk); p(13,23,sk); p(1,23,sk); p(14,23,sk);
+    // 앞 라펠 트림
+    cx.fillStyle=trim; cx.fillRect(6*S,14*S,S,12*S);
+    // 술(tassel)
+    cx.fillStyle='#d4aa44';
+    for(let i=0;i<5;i++) cx.fillRect(12*S+2, 15*S+i*2, 2, 3);
+    // 검은 신발
+    row(27,3,7,shoe); row(27,8,12,shoe); row(28,3,8,shoe); row(28,8,13,shoe);
+    // 학사모 (머리 위에 그리기)
+    // 모자 챙
+    row(0,2,13,capboard);
+    // 모자 몸통 (머리카락 위에 다시 덮기)
+    row(1,4,11,cap); row(2,4,11,cap); row(3,4,11,cap);
+    cx.fillStyle='rgba(255,255,255,.2)'; cx.fillRect(5*S,1*S,4*S,S);
+    // 술
+    cx.fillStyle='#d4aa44';
+    cx.fillRect(11*S,0,2,3*S);
+    cx.fillRect(11*S+1,3*S,2,4);
+  }
+
+  /* random sparkle */
+  if(Math.random()>.6){
+    const colors=['rgba(255,220,255,.9)','rgba(200,240,255,.9)','rgba(255,255,200,.9)'];
+    cx.fillStyle=colors[Math.floor(Math.random()*3)];
+    const sx=(2+Math.floor(Math.random()*18))*S, sy=(1+Math.floor(Math.random()*22))*S;
+    cx.fillRect(sx,sy,3,3); cx.fillRect(sx+5,sy+3,2,2);
+  }
+  cx.restore(); // ← translate 누적 방지! 없으면 클릭마다 캐릭터가 우측으로 이동함
+}
+
+/* ╔══════════════════════════════════════════════╗
+   ║  7. 화면 렌더링                               ║
+   ║  G 상태를 읽어서 DOM을 업데이트하는 함수들    ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 7-1. render(): 전체 화면 갱신 (매 액션 후 호출됨) */
+function render(){
+  drawChar();
+  // topbar
+  const {day,age,energy,maxEnergy,xp,xpNext,gold,level} = G;
+  document.getElementById('tDay').textContent=day;
+  document.getElementById('tAge').textContent=age;
+  document.getElementById('enBar').style.width=(energy/maxEnergy*100)+'%';
+  document.getElementById('enVal').textContent=`${energy}/${maxEnergy}`;
+  document.getElementById('xpBar').style.width=(xp/xpNext*100)+'%';
+  document.getElementById('xpVal').textContent=`${xp}/${xpNext}`;
+  document.getElementById('tGold').textContent=gold;
+  document.getElementById('gpGold').textContent=gold;
+  document.getElementById('charLv').textContent=`Lv.${level}`;
+  const job=JOBS.find(j=>j.id===G.jobId);
+  document.getElementById('charJob').textContent=job?`${job.icon} ${job.name}`:'학생';
+
+  // stats
+  [['str','#ff6b6b'],['int','#7ee8fa'],['cha','#e8b4f8'],['cre','#ffd6a5'],['hlt','#a8e6cf'],['hap','#ffd700']].forEach(([k])=>{
+    const v=G.stats[k];
+    document.getElementById(`sb_${k}`).style.width=Math.min(v,100)+'%';
+    document.getElementById(`sv_${k}`).textContent=v;
+  });
+
+  // wardrobe
+  const wg=document.getElementById('wgrid'); wg.innerHTML='';
+  OUTFITS.forEach((o,i)=>{
+    const owned=G.inventory.includes(i);
+    const isEq=G.equippedOutfit===i&&owned;
+    const d=document.createElement('div');
+    d.className='wslot'+(owned?'':' locked')+(isEq?' equipped':'');
+    d.title=owned?o.name+(isEq?' (착용중)':''):'미획득';
+    const cvId=`wslot_cv_${i}`;
+    if(owned){
+      d.innerHTML=`<canvas id="${cvId}" width="28" height="40" style="image-rendering:pixelated;border-radius:1px;background:#07050f;display:block;"></canvas><div class="wname">${o.name}</div>`;
+      d.onclick=()=>{ G.equippedOutfit=i; render(); saveGame(); notify(`👗 ${o.name} 착용!`); };
+    } else {
+      d.innerHTML=`<span style="font-size:14px">🔒</span>`;
+    }
+    wg.appendChild(d);
+    if(owned) setTimeout(()=>{ const cv=document.getElementById(cvId); if(cv) drawOutfitPreview(cv, o.style, true); }, 0);
+  });
+
+  renderActivities();
+  renderJobs();
+  renderShop();
+  renderKnowledge();
+
+  // title
+  const total=Object.values(G.stats).reduce((a,b)=>a+b,0)-60;
+  let title=TITLES[0].t;
+  for(const t of TITLES) if(total>=t.need) title=t.t;
+  document.getElementById('charTitle').textContent=title;
+}
+
+/* ── 7-2. renderActivities(): 활동 카드 목록 렌더링 */
+function renderActivities(){
+  const g=document.getElementById('agrid'); g.innerHTML='';
+  ACTIVITIES.forEach(a=>{
+    const ok=G.energy>=a.cost;
+    const d=document.createElement('div');
+    d.className='acard'+(ok?'':' off');
+    d.style.setProperty('--acc',a.acc); d.style.setProperty('--shd',a.shd);
+    const tags=a.tags.map(t=>`<span style="background:${t.c}22;color:${t.c};border:1px solid ${t.c}44">${t.t}</span>`).join('');
+    d.innerHTML=`<span class="aicon">${a.icon}</span><div class="aname">${a.name}</div><div class="acost">⚡ ${a.cost}</div><div class="atags">${tags}</div>`;
+    if(ok) d.onclick=()=>doActivity(a);
+    g.appendChild(d);
+  });
+}
+
+/* ── 7-3. renderJobs(): 직업 카드 목록 렌더링 */
+function renderJobs(){
+  const g=document.getElementById('jgrid'); g.innerHTML='';
+  JOBS.forEach(j=>{
+    const isCur=G.jobId===j.id;
+    const ok=Object.entries(j.req).every(([k,v])=>G.stats[k]>=v);
+    const d=document.createElement('div');
+    d.className='jcard '+(isCur?'current':ok?'available':'locked');
+    const bc=isCur?'cur':ok?'avail':'lock';
+    const bt=isCur?'현재 직업':ok?'취업 가능':'조건 미달';
+    const rq=Object.entries(j.req).map(([k,v])=>`${k}≥${v}`).join(' ')||'제한 없음';
+    d.innerHTML=`<div class="j-icon">${j.icon}</div><div class="j-name">${j.name}</div><div class="j-pay">${j.payDesc}</div><div class="j-req">조건: ${rq}</div><span class="j-badge ${bc}">${bt}</span>`;
+    if(ok&&!isCur) d.onclick=()=>{
+      G.jobId=j.id;
+      addLog(`💼 직업 변경: <span class="hl">${j.icon} ${j.name}</span> (${j.payDesc})`);
+      notify(`💼 ${j.name}으로 취업했습니다!`);
+      render(); saveGame();
+    };
+    g.appendChild(d);
+  });
+}
+
+/* ── 7-4. drawOutfitPreview(): 상점·옷장의 미니 캔버스 미리보기 */
+function drawOutfitPreview(canvas, styleKey, owned){
+  const cx = canvas.getContext('2d');
+  const S = 2;
+  cx.clearRect(0,0,canvas.width,canvas.height);
+  if(!owned){ return; }
+
+  function p(x,y,c){ cx.fillStyle=c; cx.fillRect(x*S,y*S,S,S); }
+  function row(y,x1,x2,c){ for(let x=x1;x<=x2;x++) p(x,y,c); }
+
+  const sk='#f5c5a3';
+  const hc = hairColor; // ← 실제 헤어 색상 사용!
+
+  // head
+  for(let y=2;y<=6;y++) row(y,4,9,sk);
+  // hair
+  row(0,4,9,hc); row(1,3,10,hc); row(2,3,3,hc); row(2,10,10,hc);
+  // eyes
+  cx.fillStyle='#1a1a2e'; cx.fillRect(5*S,4*S,S,S); cx.fillRect(8*S,4*S,S,S);
+  cx.fillStyle='rgba(255,255,255,.9)'; cx.fillRect(5*S+1,4*S+1,1,1); cx.fillRect(8*S+1,4*S+1,1,1);
+  // blush
+  cx.fillStyle='rgba(255,130,140,.3)'; cx.fillRect(4*S,5*S,S,S); cx.fillRect(9*S,5*S,S,S);
+  // neck
+  row(7,6,7,sk);
+
+  const shoe='#2a1a0e';
+
+  if(styleKey==='shirt'){
+    for(let y=8;y<=12;y++) row(y,3,10,'#6699cc');
+    cx.fillStyle='rgba(255,255,255,.2)'; cx.fillRect(5*S,8*S,4*S,S);
+    for(let y=8;y<=11;y++){ p(2,y,'#6699cc'); p(11,y,'#6699cc'); }
+    for(let y=13;y<=16;y++) row(y,3,10,'#334477');
+    row(17,3,6,shoe); row(17,7,10,shoe);
+  } else if(styleKey==='dress'){
+    for(let y=8;y<=11;y++) row(y,3,10,'#e8829a');
+    cx.fillStyle='rgba(255,255,255,.25)'; cx.fillRect(5*S,8*S,4*S,S);
+    for(let y=8;y<=10;y++){ p(2,y,'#e8829a'); p(11,y,'#e8829a'); }
+    row(12,2,11,'#f0a0b8'); row(13,2,11,'#f4bece'); row(14,1,12,'#f0a0b8'); row(15,1,12,'#f0a0b8'); row(16,1,12,'#f4bece');
+    cx.fillStyle='rgba(255,255,255,.4)'; for(let x=1;x<=12;x+=2) cx.fillRect(x*S,16*S,S,1);
+    row(17,3,6,'#cc6688'); row(17,7,10,'#cc6688');
+    cx.fillStyle='rgba(255,255,255,.3)'; cx.fillRect(3*S,17*S,2,2); cx.fillRect(7*S,17*S,2,2);
+  } else if(styleKey==='coat'){
+    for(let y=8;y<=17;y++) row(y,2,11,'#c8a87a');
+    for(let y=8;y<=14;y++){ p(1,y,'#c8a87a'); p(12,y,'#c8a87a'); }
+    row(8,5,8,'#e8d0a8'); row(9,5,8,'#e8d0a8'); // lapel
+    row(12,3,10,'#7a5533'); // belt
+    cx.fillStyle='#d4aa44'; cx.fillRect(6*S,12*S,S,S); // buckle
+    cx.fillStyle='#a88a5a'; p(6,10,'#a88a5a'); p(6,13,'#a88a5a'); p(6,15,'#a88a5a'); // buttons
+    row(18,3,6,shoe); row(18,7,10,shoe);
+  } else if(styleKey==='hanbok'){
+    for(let y=8;y<=11;y++) row(y,3,10,'#f5e8f0');
+    row(8,5,8,'#e87888'); row(9,6,7,'#e87888'); // ribbon
+    for(let y=8;y<=10;y++){ // colorful sleeves
+      p(2,y,['#e87888','#f5e060','#6aaa66','#7888e8'][(y-8)%4]);
+      p(11,y,['#7888e8','#6aaa66','#f5e060','#e87888'][(y-8)%4]);
+    }
+    row(12,2,11,'#4a9988'); row(13,2,11,'#5ab0a0'); row(14,1,12,'#4a9988');
+    row(15,1,12,'#5ab0a0'); row(16,1,12,'#4a9988');
+    cx.fillStyle='#d4aa44'; for(let x=1;x<=12;x++) cx.fillRect(x*S,16*S+1,S,1);
+    row(18,3,6,'#334455'); row(18,7,10,'#334455');
+  } else if(styleKey==='fancydress'){
+    for(let y=8;y<=11;y++) row(y,4,9,'#9966cc');
+    cx.fillStyle='rgba(255,255,255,.2)'; cx.fillRect(5*S,8*S,3*S,S);
+    p(3,8,'#9966cc'); p(10,8,'#9966cc'); // spaghetti straps
+    row(12,2,11,'#bb88ee'); row(13,2,11,'#cc99ff'); row(14,1,12,'#bb88ee');
+    row(15,1,12,'#cc99ff'); row(16,0,13,'#bb88ee');
+    cx.fillStyle='rgba(255,255,255,.5)'; [2,5,8,11,1,6,10].forEach((x,i)=>cx.fillRect(x*S,(13+i%3)*S,2,2));
+    row(17,3,6,'#6633aa'); row(17,7,10,'#6633aa');
+  } else if(styleKey==='winter'){
+    row(6,4,9,'#eeeef8'); row(7,4,9,'#eeeef8'); // turtleneck
+    for(let y=8;y<=13;y++) row(y,3,10,'#eeeef8');
+    for(let y=8;y<=13;y++){ p(2,y,'#d4aa33'); p(3,y,'#d4aa33'); p(10,y,'#d4aa33'); p(11,y,'#d4aa33'); }
+    for(let y=8;y<=13;y++){ p(1,y,'#d4aa33'); p(12,y,'#d4aa33'); }
+    for(let y=14;y<=16;y++) row(y,3,10,'#4466aa');
+    cx.fillStyle='rgba(255,255,255,.15)'; cx.fillRect(5*S,14*S,3*S,2*S);
+    const boot='#553322';
+    row(17,3,6,boot); row(17,7,10,boot); row(18,3,6,boot); row(18,7,10,boot);
+  } else if(styleKey==='casual'){
+    row(7,4,9,'#88bb66'); row(7,4,9,'#88bb66'); // hoodie
+    for(let y=8;y<=14;y++) row(y,3,10,'#88bb66');
+    for(let y=8;y<=13;y++){ p(2,y,'#88bb66'); p(11,y,'#88bb66'); }
+    cx.fillStyle='rgba(255,255,255,.2)'; cx.fillRect(5*S,8*S,3*S,S);
+    cx.fillStyle='#6a9950'; cx.fillRect(4*S,12*S,2*S,2*S); cx.fillRect(8*S,12*S,2*S,2*S); // pockets
+    for(let y=15;y<=17;y++) row(y,3,10,'#eeeecc');
+    const sn='#eeeeee';
+    row(18,3,6,sn); row(18,7,10,sn);
+    cx.fillStyle='#88bb66'; cx.fillRect(3*S,18*S+1,3*S,1); cx.fillRect(7*S,18*S+1,3*S,1);
+  } else if(styleKey==='gown'){
+    // 학사모
+    row(0,2,11,'#2a1a44'); row(1,4,9,'#553399');
+    cx.fillStyle='#d4aa44'; cx.fillRect(9*S,0,2,2*S);
+    for(let y=8;y<=17;y++) row(y,2,11,'#1a1a2e');
+    for(let y=8;y<=15;y++){ p(1,y,'#1a1a2e'); p(12,y,'#1a1a2e'); }
+    cx.fillStyle='#8866cc'; cx.fillRect(6*S,8*S,S,9*S); // stripe
+    cx.fillStyle='rgba(255,255,255,.1)'; cx.fillRect(3*S,8*S,2*S,9*S);
+    row(18,3,6,shoe); row(18,7,10,shoe);
+  }
+}
+
+/* ── 7-5. renderShop(): 상점 아이템 목록 렌더링 */
+function renderShop(){
+  const g=document.getElementById('sgrid'); g.innerHTML='';
+  OUTFITS.slice(1).forEach((o,i)=>{
+    const idx=i+1;
+    const owned=G.inventory.includes(idx);
+    const d=document.createElement('div');
+    d.className='sitem'+(owned?' owned':'');
+    const bonusStr=Object.entries(o.bonus).map(([k,v])=>k+'+'+v).join(' ')||'—';
+    // 캔버스 미리보기
+    const cvId=`prev_${o.style}`;
+    d.innerHTML=`<canvas id="${cvId}" width="28" height="40" style="image-rendering:pixelated;display:block;margin:0 auto 4px;border:1px solid var(--border);border-radius:1px;background:#07050f;"></canvas><div class="si-name">${o.name}</div><div class="si-price">${owned?'✓ 보유':o.price+'G'}</div><div class="si-desc">${bonusStr}</div>`;
+    if(!owned) d.onclick=()=>{
+      if(G.gold<o.price){ notify('💰 골드 부족!'); return; }
+      G.gold-=o.price;
+      G.inventory.push(idx);
+      G.equippedOutfit=idx;
+      addLog(`🛒 ${o.name} 구매 & 자동 착용! <span class="gl">-${o.price}G</span>`);
+      notify(`👗 ${o.name} 구매 완료! 자동으로 착용됐어요.`);
+      render(); saveGame();
+    };
+    g.appendChild(d);
+    // DOM에 붙인 뒤 그리기
+    setTimeout(()=>{ const cv=document.getElementById(cvId); if(cv) drawOutfitPreview(cv, o.style, true); }, 0);
+  });
+  SHOP_SERVICES.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='sitem';
+    d.innerHTML=`<div class="si-icon">${s.icon}</div><div class="si-name">${s.name}</div><div class="si-price">${s.price}G</div><div class="si-desc">${s.desc}</div>`;
+    d.onclick=()=>{
+      if(G.gold<s.price){ notify('💰 골드 부족!'); return; }
+      G.gold-=s.price;
+      Object.entries(s.bonus).forEach(([k,v])=>{ if(G.stats[k]!==undefined) G.stats[k]=clamp(G.stats[k]+v,0,100); });
+      addLog(`🛒 ${s.name}: <span class="hl">${Object.entries(s.bonus).map(([k,v])=>k+'+'+v).join(', ')}</span> <span class="gl">-${s.price}G</span>`);
+      notify(`✨ ${s.name} 효과 적용!`);
+      render(); saveGame();
+    };
+    g.appendChild(d);
+  });
+}
+
+/* ── 7-6. renderKnowledge(): 지식 진행도 카드 렌더링 */
+function renderKnowledge(){
+  const g=document.getElementById('kgrid'); g.innerHTML='';
+  Object.entries(KNOWLEDGE_DATA).forEach(([subj,icon])=>{
+    const val=G.know[subj]; const lv=Math.floor(val/20)+1; const pct=(val%20)/20*100; const c=K_COLORS[subj];
+    const d=document.createElement('div'); d.className='kcard';
+    d.innerHTML=`<div class="k-icon">${icon}</div><div class="k-name">${subj}</div>
+      <div class="bar-track" style="width:100%;height:7px"><div class="bar-fill" style="width:${pct}%;background:${c}"></div></div>
+      <div class="k-lv">Lv.${lv} (${val}/100)</div>`;
+    g.appendChild(d);
+  });
+}
+
+/* ╔══════════════════════════════════════════════╗
+   ║  8. 게임 로직 (액션)                         ║
+   ║  실제 게임플레이 동작을 처리하는 함수들        ║
+   ╚══════════════════════════════════════════════╝ */
+/* ── 8-1. doActivity(): 활동 실행 → 스탯/골드/XP 변화 */
+function doActivity(a){
+  if(G.energy<a.cost) return;
+  G.energy-=a.cost;
+  const res=[];
+  Object.entries(a.eff).forEach(([k,range])=>{
+    if(!Array.isArray(range)) return;
+    const v=rnd(range[0],range[1]);
+    if(k==='xp'){ gainXP(v); res.push(`XP+${v}`); }
+    else if(G.stats[k]!==undefined){ G.stats[k]=clamp(G.stats[k]+v,0,100); res.push(`${k}${v>=0?'+':''}${v}`); }
+  });
+  if(a.id==='study'){
+    const subj=Object.keys(G.know)[Math.floor(Math.random()*6)];
+    const gn=rnd(1,4); G.know[subj]=Math.min(100,G.know[subj]+gn); res.push(`${subj}+${gn}`);
+  }
+  if(a.gold){ const gv=rnd(a.gold[0],a.gold[1]); G.gold+=gv; res.push(`💰+${gv}G`); }
+  addLog(`${a.icon} ${a.name}: <span class="hl">${res.join(', ')}</span>`);
+  render(); saveGame();
+}
+
+/* ── 8-2. gainXP(): XP 획득 + 레벨업 처리
+   xpNext에 도달하면 레벨업, xpNext는 1.45배씩 증가 */
+function gainXP(v){
+  G.xp+=v;
+  if(G.xp>=G.xpNext){
+    G.xp-=G.xpNext; G.xpNext=Math.floor(G.xpNext*1.45);
+    G.level++; G.maxEnergy=Math.min(20,G.maxEnergy+1);
+    showLevelUp();
+  }
+}
+
+/* ── 8-3. nextDay(): 다음날로 넘기기
+   직업 수입 지급 / 에너지 회복 / 행복 -1 / 이벤트 확률 발생 */
+function nextDay(){
+  const job=JOBS.find(j=>j.id===G.jobId);
+  if(job&&job.pay>0){ G.gold+=job.pay; addLog(`${job.icon} 직업 수입: <span class="gl">+${job.pay}G</span>`); }
+  G.stats.hap=Math.max(0,G.stats.hap-1);
+  G.energy=G.maxEnergy; G.day++;
+  if(G.day%365===0) G.age++;
+  addLog(`💤 하루를 마무리. Day ${G.day} 시작!`);
+  if(Math.random()<0.22) triggerEvent();
+  render(); saveGame();
+}
+
+/* ── 8-4. triggerEvent(): 랜덤 이벤트 발생 및 선택지 표시 */
+function triggerEvent(){
+  const ev=EVENTS[Math.floor(Math.random()*EVENTS.length)];
+  document.getElementById('evTitle').textContent=ev.title;
+  document.getElementById('evDesc').textContent=ev.desc;
+  const btns=document.getElementById('evBtns'); btns.innerHTML='';
+  ev.opts.forEach(opt=>{
+    const b=document.createElement('button'); b.className='ev-btn'; b.textContent=opt.t;
+    b.onclick=()=>{
+      Object.entries(opt.eff).forEach(([k,v])=>{
+        if(k==='xp') gainXP(v);
+        else if(G.stats[k]!==undefined) G.stats[k]=clamp(G.stats[k]+v,0,100);
+      });
+      if(opt.g) G.gold=Math.max(0,G.gold+opt.g);
+      addLog(`🌟 이벤트: <span class="hl">${opt.msg}</span>`);
+      document.getElementById('evbox').classList.remove('show');
+      render(); saveGame();
+    };
+    btns.appendChild(b);
+  });
+  document.getElementById('evbox').classList.add('show');
+}
+
+/* ── 8-5. showLevelUp(): 레벨업 팝업 표시 */
+function showLevelUp(){
+  const d=document.createElement('div'); d.className='lvup-overlay';
+  d.innerHTML=`<div class="lvup-box"><div class="lvup-icon">⭐</div><div class="lvup-title">LEVEL UP!</div><div class="lvup-sub">Lv.${G.level}이 되었습니다!<br>최대 에너지 +1 증가!</div><button class="lvup-btn" onclick="this.closest('.lvup-overlay').remove()">계속하기</button></div>`;
+  document.body.appendChild(d);
+}
+
+/* ╔══════════════════════════════════════════════╗
+   ║  9. 유틸리티 & 초기화                        ║
+   ╚══════════════════════════════════════════════╝ */
+
+/* ── 9-1. addLog(): 일기 탭에 로그 추가 */
+function addLog(msg){
+  const box=document.getElementById('logbox');
+  const e=document.createElement('div'); e.className='lentry';
+  e.innerHTML=`<span class="dtag">[Day${G.day}]</span>${msg}`;
+  box.prepend(e);
+}
+
+/* ── 9-2. notify(): 우측 상단 알림 토스트 표시 */
+function notify(msg){
+  const n=document.createElement('div'); n.className='notif'; n.textContent=msg;
+  document.body.appendChild(n); setTimeout(()=>n.remove(),3200);
+}
+
+/* ── 9-3. switchTab(): 탭 전환 */
+function switchTab(btn,id){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tpanel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on'); document.getElementById('tp-'+id).classList.add('on');
+}
+
+/* ── 9-4. rnd(): 랜덤 정수 / clamp(): 범위 제한 헬퍼 */
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+function clamp(v,mn,mx){ return Math.max(mn,Math.min(mx,v)); }
+
+/* ── 9-5. 캐릭터 클릭 이벤트: 헤어 색상 랜덤 변경 */
+document.getElementById('charCanvas').addEventListener('click',()=>{
+  hairColor=HAIR_COLORS[Math.floor(Math.random()*HAIR_COLORS.length)];
+  drawChar(); notify('💇 헤어 색상 변경!'); saveGame();
+});
+
+/* ── 9-6. INIT: 게임 최초 시작 or 저장 데이터 불러오기 */
+// ── INIT ──
+const isNewGame = !loadGame();
+if(isNewGame){
+  addLog('🌟 새로운 여정이 시작됐습니다! 활동하며 스탯을 키워보세요.');
+  addLog('💰 골드: 아르바이트(활동탭) + 직업 수입(매일 자동) + 이벤트 보상!');
+  addLog('👗 옷은 상점탭 → 구매하면 자동 착용됩니다!');
+} else {
+  notify('💾 저장 데이터를 불러왔습니다!');
+}
+// 아이디가 있으면 표시
+if(saveId){
+  const ind = document.getElementById('saveIndicator');
+  if(ind) ind.textContent = '🔑 ' + saveId;
+}
+render();
+</script>
+</body>
+</html>
